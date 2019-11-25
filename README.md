@@ -23,8 +23,16 @@ Identifying STLs with Machine Learning
 - [x] Export data to CSV
 
 ### Metrics Functions
-- [ ] Count of folders with multiple STLs
-- [ ] Per-directory details
+- [x] Count of folders with multiple STLs
+- [x] Per-directory details
+
+### DoDataScience - Frontend for applying different algorithms to the data
+- [x] Load hardcoded datasets
+- [ ] Iterative request for datasets from user
+- [x] Training/testing partitions
+- [ ] Decision Trees
+- [ ] Normalize data
+- [ ] Nearest Neighbor
 
 ## Order of operations
 1. Get list of Thing #s (ThingiverseCaller w/ --list)
