@@ -1,8 +1,18 @@
 # WhatsThatThing
 Identifying STLs with Machine Learning
 
-## Tasks for each script
+## Overall Project Tasks
+- [ ] Download more datasets
+  - [ ] Birdhouses
+  - [ ] Teapots
+- [ ] Research papers on 3D object identification
+- [ ] Compile results from alorithms
+  - [ ] Decision Trees
+  - [ ] Nearest Neighbor
+- [ ] Create project slides
+- [ ] Write up report on my results
 
+## Tasks for each script
 ### ThingFileManipulator - Performing file operations requred to prep data for processing
 
 - [x] Unzipping
