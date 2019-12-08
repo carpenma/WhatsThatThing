@@ -3,12 +3,13 @@ Identifying STLs with Machine Learning
 
 ## Overall Project Tasks
 - [ ] Download more datasets
-  - [ ] Birdhouses
-  - [ ] Teapots
+  - [ ] Cookie Cutters
+  - [ ] Rings
 - [ ] Research papers on 3D object identification
 - [ ] Compile results from alorithms
   - [ ] Decision Trees
   - [ ] Nearest Neighbor
+- [ ] Voxel-Based Model?
 - [ ] Create project slides
 - [ ] Write up report on my results
 
