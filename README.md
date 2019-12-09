@@ -6,9 +6,9 @@ Identifying STLs with Machine Learning
   - [x] Cookie Cutters
   - [x] Rings
 - [ ] Remove redundant features
-- [ ] Normalize data
+- [x] Standardize data
 - [ ] Research papers on 3D object identification
-- [ ] Compile results from alorithms
+- [ ] Compile results from algorithms
   - [ ] Decision Trees
   - [ ] Nearest Neighbor
 - [ ] Voxel-Based Model?

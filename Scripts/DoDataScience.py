@@ -1,6 +1,7 @@
 import DoDataScienceHelper as Helper
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
+from sklearn.preprocessing import StandardScaler
 import pydotplus
 import sys, os, argparse
 from pathlib import Path
@@ -10,6 +11,9 @@ import pandas
 parser = argparse.ArgumentParser()
 parser.add_argument("-d", "--datafile", help="Location of file containing data to load")
 parser.add_argument("-c", "--config", help="Include a configuration file to allow automated operation")
+algorithm = parser.add_argument_group('Algorithm')
+algorithm.add_argument("-t", "--tree", help="Decision Tree algorithm", action="store_true")
+algorithm.add_argument("-k", "--knn", help="K-Nearest Neighbor algorithm", action="store_true")
 
 args = parser.parse_args()
 
@@ -20,6 +24,10 @@ if not args.datafile is None and os.path.isfile(args.datafile):
     inFile = args.datafile
 else:
     print("Input data file must be specified and accessible to use this script.  Exiting...")
+    sys.exit(1)
+
+if args.tree == False and args.knn == False:
+    print("An algorithm must be specified!  Exiting...")
     sys.exit(1)
 
 df = pandas.read_csv(inFile)
@@ -41,6 +49,7 @@ df, labelList = Helper.numberifyLabels(df, df.shape[1]-1)
 print(labelList)
 
 ## Split data into training and testing
+#TODO: Turn this into a function
 dataColMin = 1  # Don't use ThingID as part of the algorithm
 dataColMax = df.shape[1]-1
 allData, allLabels = df.iloc[:,dataColMin:dataColMax], df.iloc[:,df.shape[1]-1]
@@ -49,22 +58,37 @@ dataTrain, dataTest, labelTrain, labelTest = train_test_split(allData, allLabels
 
 print("%d training and %d testing entries" % (len(labelTrain), len(labelTest)))
 
+## Standardize the data
+scaler = StandardScaler()
+dataTrainStandardized = scaler.fit_transform(dataTrain)
+dataTestStandardized = scaler.transform(dataTest)
+
+print(dataTrain.tail())
+print(dataTrainStandardized[256,23])
+
 ## Decision Tree
-clf = DecisionTreeClassifier(criterion="entropy", max_depth=5, random_state=0)
+if args.tree == True:
+    print("Decision Tree")
+    clf = DecisionTreeClassifier(criterion="entropy", max_depth=5, random_state=0)
 
-decisionTree = clf.fit(dataTrain, labelTrain)
+    decisionTree = clf.fit(dataTrain, labelTrain)
 
-print("Accuracy on training set: %.2f %% | Accuracy on test set: %.2f %%" % (
-    100*clf.score(dataTrain, labelTrain), 100*clf.score(dataTest, labelTest)))
+    print("Accuracy on training set: %.2f %% | Accuracy on test set: %.2f %%" % (
+        100*clf.score(dataTrain, labelTrain), 100*clf.score(dataTest, labelTest)))
 
-# Create DOT data
-dot_data = export_graphviz(decisionTree, out_file=None,
-            feature_names=df.columns[dataColMin:dataColMax], class_names=labelList)
+    # Create DOT data
+    dot_data = export_graphviz(decisionTree, out_file=None,
+                feature_names=df.columns[dataColMin:dataColMax], class_names=labelList)
 
-# Draw graph
-graph = pydotplus.graph_from_dot_data(dot_data)  
+    # Draw graph
+    graph = pydotplus.graph_from_dot_data(dot_data)  
 
-# Create PNG
-graph.write_png('D:\Dropbox\School\Graduate - LTU\Year 3\MCS 5623\Test.png')
+    # Create PNG
+    #graph.write_png('D:\Dropbox\School\Graduate - LTU\Year 3\MCS 5623\Test.png')
+    graph.write_png('C:/Users/carpe/Dropbox/School/Graduate - LTU/Year 3/MCS 5623/Test.png')
+
+elif args.knn == True:
+    print("K-Nearest Neighbor")
+    pass
 
 sys.exit(0)
