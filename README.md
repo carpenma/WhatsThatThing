@@ -2,9 +2,9 @@
 Identifying STLs with Machine Learning
 
 ## Overall Project Tasks
-- [ ] Download more datasets
-  - [ ] Cookie Cutters
-  - [ ] Rings
+- [x] Download more datasets
+  - [x] Cookie Cutters
+  - [x] Rings
 - [ ] Research papers on 3D object identification
 - [ ] Compile results from alorithms
   - [ ] Decision Trees
@@ -17,7 +17,7 @@ Identifying STLs with Machine Learning
 ### ThingFileManipulator - Performing file operations requred to prep data for processing
 
 - [x] Unzipping
-- [ ] Removing non-STLs
+- [x] Removing non-STLs
 - [ ] Determining which STLs in a folder to keep if multiple present
 - [x] Renaming STLs
 

@@ -2,10 +2,10 @@ import numpy, os, glob
 from stl import mesh
 import numpy as np
 
-HEADERS = ["ThingID", "File Size (bytes)", "Triangle Count", "Volume (?)", "Volume Ratio", "CoG X", "CoG Y", "CoG Z", "Bounding Box Center X", "Bounding Box Center Y", "Bounding Box Center Z", "Bounding Box Size X", "Bounding Box Size Y", "Bounding Box Size Z", "Axis Symmetry X", "Axis Symmetry Y", "Axis Symmetry Z", "Aspect Ratio Large:Mid", "Largest Dimension", "Aspect Ratio Mid:Small", "Smallest Dimension"]
+HEADERS = ["ThingID", "File Size (bytes)", "Triangle Count", "Volume (?)", "Volume Ratio", "CoG X", "CoG Y", "CoG Z", "Bounding Box Center X", "Bounding Box Center Y", "Bounding Box Center Z", "Bounding Box Size X", "Bounding Box Size Y", "Bounding Box Size Z", "Axis Symmetry X", "Axis Symmetry Y", "Axis Symmetry Z", "Aspect Ratio Large:Mid", "Largest Dimension", "Aspect Ratio Mid:Small", "Smallest Dimension", "Label"]
 
 class objectFile:
-    def __init__(self, thingID, fileSize, triangleCount, volume, volumeRatio, centerOfGravity, boundingBoxCenter, boundingBoxSize, symmetry, aspectRatio1, aspectRatio2):
+    def __init__(self, thingID, fileSize, triangleCount, volume, volumeRatio, centerOfGravity, boundingBoxCenter, boundingBoxSize, symmetry, aspectRatio1, aspectRatio2, label):
         self.thingID = thingID
         self.fileSize = fileSize
         self.triangleCount = triangleCount
@@ -17,6 +17,7 @@ class objectFile:
         self.symmetry = symmetry
         self.aspectRatio1 = aspectRatio1
         self.aspectRatio2 = aspectRatio2
+        self.label = label
     
     def getAttributes(self):
         return [self.thingID, 
@@ -39,15 +40,21 @@ class objectFile:
         '%.2f' % self.aspectRatio1[0],
         '%s' % self.aspectRatio1[1],
         '%.2f' % self.aspectRatio2[0],
-        '%s' % self.aspectRatio2[1]]
+        '%s' % self.aspectRatio2[1],
+        '%s' % self.label]
 
-def getMetaData(fName):
+def getMetaData(fName, label):
     metaList = []
     stlList = glob.glob(os.path.join(fName, "*.stl"))
     for item in stlList:
         thingID = os.path.splitext(os.path.basename(item))[0]
+        print(thingID)
         fileSize = os.path.getsize(item)
-        thisMesh = mesh.Mesh.from_file(item)
+        try:
+            thisMesh = mesh.Mesh.from_file(item)
+        except:
+            print("%s is too large to be tested, skipping it" % item)
+            continue
         triangleCount = len(thisMesh.normals)
         volume, cog, inertia = thisMesh.get_mass_properties()
 
@@ -66,8 +73,7 @@ def getMetaData(fName):
 
         aspectRatio1, aspectRatio2 = getAspectRatios(boundingBox)
 
-
-        thisElement = objectFile(thingID, fileSize, triangleCount, volume, volumeRatio, cog, midpoint, boundingBox, symmetry, aspectRatio1, aspectRatio2)
+        thisElement = objectFile(thingID, fileSize, triangleCount, volume, volumeRatio, cog, midpoint, boundingBox, symmetry, aspectRatio1, aspectRatio2, label)
         metaList.append(thisElement)
 
     return metaList

@@ -27,9 +27,7 @@ if args.label is None:
 else:
     label = args.label
 
-metaList = Helper.getMetaData(objectFName)
-
-#TODO: Apply the labels passed in -l argument
+metaList = Helper.getMetaData(objectFName, label)
 
 Helper.writeMetaData(metaDataFName, metaList)
 
