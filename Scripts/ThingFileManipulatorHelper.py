@@ -20,7 +20,7 @@ def unzipper(fName, keepZips):
                     print("Directory %s contains %d files" % (item,len(zipped.namelist())))
                     zipped.extractall(os.path.join(fName, item.replace('.zip','')))
 
-                    if len(zipped.namelist() <= 1):
+                    if len(zipped.namelist()) <= 1:
                         singleItemDirs.append(item)
             
             # Even if we didn't extract it during this run, the fact it's already in the 
@@ -114,7 +114,7 @@ def buildPathAbove(rootDir, newDirSuffix="-New"):
     return newDirPath
 
 def metricSelector(fName):
-    optionDict = {0: "Quit", 1: "STL Counts", 2: "File Structure Metrics"}
+    optionDict = {0: "Quit", 1: "STL Counts", 2: "File Structure Metrics", 3: "Object Metrics"}
     while True:
         print("=== Select an option from the list ===")
         for element in optionDict.keys():
@@ -126,6 +126,8 @@ def metricSelector(fName):
             metricsSTL(fName)
         elif int(selection) == 2:
             metricsFile(fName)
+        elif int(selection) == 3:
+            metricsObject(fName)
         else:
             return
 
@@ -163,6 +165,7 @@ def metricsFile(fName):
         if os.path.isdir(dirPath):
             dirCount = dirCount + 1
             if len(os.listdir(dirPath)) == 0:
+                print("%s is empty" % directory)
                 emptyCount = emptyCount + 1
             for item in os.listdir(dirPath):
                 itemPath = os.path.join(dirPath, item)
@@ -173,8 +176,25 @@ def metricsFile(fName):
                     licenseCount = licenseCount + 1
                 elif os.path.isdir(itemPath) and "IMAGE" in item:
                     imageCount = imageCount + 1
+                elif os.path.isdir(itemPath):
+                    print("%s contains non-image directories" % directory)
     print("%d directories scanned"%dirCount)
     print("%d with READMEs | %d LICENSE files | %d Image directories| %d empty diretories" % 
     (readmeCount, licenseCount, imageCount, emptyCount))
 
     return
+
+def metricsObject(fName):
+    from stl import mesh
+    MAX_TRIANGLES = 100000000
+    overTriangleCount = 0
+    for STLObject in os.listdir(fName):
+        print(STLObject)
+        if STLObject.endswith(".stl"):
+            dirPath = Path(os.path.join(fName, STLObject))
+            thisMesh = mesh.Mesh.from_file(dirPath)
+            triangleCount = len(thisMesh.normals)
+            if triangleCount > MAX_TRIANGLES:
+                print("%s has too many triangles" % STLObject)
+                overTriangleCount = overTriangleCount + 1
+    print("%d objects have over %d triangles" % (overTriangleCount, MAX_TRIANGLES))
