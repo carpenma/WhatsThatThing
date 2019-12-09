@@ -5,6 +5,8 @@ Identifying STLs with Machine Learning
 - [x] Download more datasets
   - [x] Cookie Cutters
   - [x] Rings
+- [ ] Remove redundant features
+- [ ] Normalize data
 - [ ] Research papers on 3D object identification
 - [ ] Compile results from alorithms
   - [ ] Decision Trees
@@ -39,10 +41,8 @@ Identifying STLs with Machine Learning
 
 ### DoDataScience - Frontend for applying different algorithms to the data
 - [x] Load hardcoded datasets
-- [ ] Iterative request for datasets from user
 - [x] Training/testing partitions
 - [ ] Decision Trees
-- [ ] Normalize data
 - [ ] Nearest Neighbor
 
 ## Order of operations

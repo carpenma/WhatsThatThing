@@ -52,21 +52,24 @@ def axesToNumeric(df, mapArray):
             smallest['Z'].append(0)
 
     # Add new columns to dataframe
-    df['largest_X'] = smallest['X']
-    df['largest_Y'] = smallest['Y']
-    df['largest_Z'] = smallest['Z']
-    df['smallest_X'] = smallest['X']
-    df['smallest_Y'] = smallest['Y']
-    df['smallest_Z'] = smallest['Z']
+    df['largestX'] = smallest['X']
+    df['largestY'] = smallest['Y']
+    df['largestZ'] = smallest['Z']
+    df['smallestX'] = smallest['X']
+    df['smallestY'] = smallest['Y']
+    df['smallestZ'] = smallest['Z']
 
     df = df.drop(columns=['smallestDimension', 'largestDimension'])
     return df
 
-def assignLabels(frames, labels):
-    if len(frames) != len(labels):
-        print("Error: Label and frame list lengths must match")
-        return None
-    for i in range(len(frames)):
-        frames[i]['groupLabel'] = [labels[i]] * frames[i].shape[0]
+def numberifyLabels(df, labelCol):
+    labelDict = {}
+    labelIndex = 0
+    for label in sorted(df.iloc[:,labelCol].unique()):
+        labelDict[label] = labelIndex
+        labelIndex = labelIndex + 1
 
-    return frames
+    for i in range(df.shape[0]):
+        df.iloc[i,labelCol] = labelDict[df.iloc[i,labelCol]]
+
+    return [df, list(labelDict.keys())]

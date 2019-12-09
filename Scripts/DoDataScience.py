@@ -7,79 +7,50 @@ from pathlib import Path
 import numpy as np
 import pandas
 
-#VASE_FNAME = Path('C:/Users/carpe/Dropbox/School/Graduate - LTU/Year 3/MCS 5623/Data/Vases_First-200_v1.csv')
-VASE_FNAME = Path('D:\Dropbox\School\Graduate - LTU\Year 3\MCS 5623\Data\Vases_First-200_v1.csv')
-
-#BENCHY_FNAME = Path('C:/Users/carpe/Dropbox/School/Graduate - LTU/Year 3/MCS 5623/Data/Benchys_v1.csv')
-BENCHY_FNAME = Path('D:\Dropbox\School\Graduate - LTU\Year 3\MCS 5623\Data\Benchys_v1.csv')
-
 parser = argparse.ArgumentParser()
+parser.add_argument("-d", "--datafile", help="Location of file containing data to load")
 parser.add_argument("-c", "--config", help="Include a configuration file to allow automated operation")
-
 
 args = parser.parse_args()
 
 if not args.config is None:
     print("The --config option is not implemented at this time")
 
-vaseData = pandas.read_csv(VASE_FNAME)
-benchyData = pandas.read_csv(BENCHY_FNAME)
+if not args.datafile is None and os.path.isfile(args.datafile):
+    inFile = args.datafile
+else:
+    print("Input data file must be specified and accessible to use this script.  Exiting...")
+    sys.exit(1)
 
-print("%d vase and %d benchy records loaded" % (vaseData.shape[0], benchyData.shape[0]))
+df = pandas.read_csv(inFile)
 
-# if not vaseData.columns == benchyData.columns:
-#     print("Error, columns in provided data sets do not match!  Aborting")
-#     sys.exit(1)
-
-## Update column names
-vaseData.columns = ['thingID',
-    'fileSize',
-    'triangleCount',
-    'volume',
-    'volumeRatio',
-    'cog_X', 'cog_Y', 'cog_Z',
-    'bboxCenter_X', 'bboxCenter_Y', 'bboxCenter_Z',
-    'bboxSize_X', 'bboxSize_Y', 'bboxSize_Z',
-    'symmetry_X', 'symmetry_Y', 'symmetry_Z',
-    'AR1', 'largestDimension',
-    'AR2', 'smallestDimension']
-
-benchyData.columns = vaseData.columns
+print("%d records loaded" % (df.shape[0]))
+print(df.columns)
 
 ## One-hot encoding for X/Y/Z
-vaseData = Helper.axesToNumeric(vaseData, Helper.axisMap)
-benchyData = Helper.axesToNumeric(benchyData, Helper.axisMap)
+print(df.shape)
+df = Helper.axesToNumeric(df, Helper.axisMap)
+print(df.shape)
 
-finalColumnNames = ['thingID',
-    'fileSize',
-    'triangleCount',
-    'volume',
-    'volumeRatio',
-    'cog_X', 'cog_Y', 'cog_Z',
-    'bboxCenter_X', 'bboxCenter_Y', 'bboxCenter_Z',
-    'bboxSize_X', 'bboxSize_Y', 'bboxSize_Z',
-    'symmetry_X', 'symmetry_Y', 'symmetry_Z',
-    'AR1', 'AR2',
-    'largest_X', 'largest_Y', 'largest_Z',
-    'smallest_X', 'smallest_Y', 'smallest_Z']
+# Move the column of labels to the end so it's easier to interact with
+colsList = list(df.columns.values)
+colsList.pop(colsList.index('label'))
+df = df[colsList+['label']]
 
-
-## Apply data labels
-Helper.assignLabels([vaseData, benchyData], ['vase', 'benchy'])
-
-## Merge the data sets
-df = vaseData.append(benchyData, ignore_index=True)
+df, labelList = Helper.numberifyLabels(df, df.shape[1]-1)
+print(labelList)
 
 ## Split data into training and testing
+dataColMin = 1  # Don't use ThingID as part of the algorithm
 dataColMax = df.shape[1]-1
-allData, allLabels = df.iloc[:,0:dataColMax], df.iloc[:,df.shape[1]-1]
+allData, allLabels = df.iloc[:,dataColMin:dataColMax], df.iloc[:,df.shape[1]-1]
 
 dataTrain, dataTest, labelTrain, labelTest = train_test_split(allData, allLabels, test_size=0.30, random_state=0)
 
 print("%d training and %d testing entries" % (len(labelTrain), len(labelTest)))
 
 ## Decision Tree
-clf = DecisionTreeClassifier(criterion="entropy", max_depth=1, random_state=0)
+clf = DecisionTreeClassifier(criterion="entropy", max_depth=5, random_state=0)
 
 decisionTree = clf.fit(dataTrain, labelTrain)
 
@@ -88,7 +59,7 @@ print("Accuracy on training set: %.2f %% | Accuracy on test set: %.2f %%" % (
 
 # Create DOT data
 dot_data = export_graphviz(decisionTree, out_file=None,
-            feature_names=finalColumnNames)
+            feature_names=df.columns[dataColMin:dataColMax], class_names=labelList)
 
 # Draw graph
 graph = pydotplus.graph_from_dot_data(dot_data)  
