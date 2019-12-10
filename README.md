@@ -42,8 +42,8 @@ Identifying STLs with Machine Learning
 ### DoDataScience - Frontend for applying different algorithms to the data
 - [x] Load hardcoded datasets
 - [x] Training/testing partitions
-- [ ] Decision Trees
-- [ ] Nearest Neighbor
+- [x] Decision Trees
+- [x] Nearest Neighbor
 
 ## Order of operations
 1. Get list of Thing #s (ThingiverseCaller w/ --list)

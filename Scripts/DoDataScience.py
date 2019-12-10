@@ -1,6 +1,5 @@
 import DoDataScienceHelper as Helper
 from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier, export_graphviz
 from sklearn.preprocessing import StandardScaler
 import pydotplus
 import sys, os, argparse
@@ -40,6 +39,8 @@ print(df.shape)
 df = Helper.axesToNumeric(df, Helper.axisMap)
 print(df.shape)
 
+df = df.drop(columns=['fileSize'])
+
 # Move the column of labels to the end so it's easier to interact with
 colsList = list(df.columns.values)
 colsList.pop(colsList.index('label'))
@@ -63,11 +64,9 @@ scaler = StandardScaler()
 dataTrainStandardized = scaler.fit_transform(dataTrain)
 dataTestStandardized = scaler.transform(dataTest)
 
-print(dataTrain.tail())
-print(dataTrainStandardized[256,23])
-
 ## Decision Tree
 if args.tree == True:
+    from sklearn.tree import DecisionTreeClassifier, export_graphviz
     print("Decision Tree")
     clf = DecisionTreeClassifier(criterion="entropy", max_depth=5, random_state=0)
 
@@ -88,7 +87,13 @@ if args.tree == True:
     graph.write_png('C:/Users/carpe/Dropbox/School/Graduate - LTU/Year 3/MCS 5623/Test.png')
 
 elif args.knn == True:
+    from sklearn.neighbors import KNeighborsClassifier
     print("K-Nearest Neighbor")
-    pass
+    knn = KNeighborsClassifier(n_neighbors=5, p=2, metric='minkowski')
+    knn.fit(dataTrainStandardized, labelTrain)
+    
+    print("Accuracy on training set: %.2f %% | Accuracy on test set: %.2f %%" % (
+        100*knn.score(dataTrainStandardized, labelTrain), 
+        100*knn.score(dataTestStandardized, labelTest)))
 
 sys.exit(0)
