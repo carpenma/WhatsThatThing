@@ -34,10 +34,16 @@ Identifying STLs with Machine Learning
 - [x] Overall file size? (Redundant w/ # triangles)
 - [ ] Add labels to all rows representing the grouo the data belongs to!
 - [x] Export data to CSV
-
-### Metrics Functions
+#### Metrics Functions
 - [x] Count of folders with multiple STLs
 - [x] Per-directory details
+- [ ] Check units of each file
+
+### FileVoxelizer - Convert all .stls in a directory into arrays of Voxels representing a normalized cube of volume
+- [x] Scale each file (into 10cm cube volume)
+- [x] Convert file into (filled) VoxelGrid
+- [ ] Generate array of voxels
+- [ ] Store Voxels, ThingID, and label, into csv
 
 ### DoDataScience - Frontend for applying different algorithms to the data
 - [x] Load hardcoded datasets
