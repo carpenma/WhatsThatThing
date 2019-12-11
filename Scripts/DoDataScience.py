@@ -13,6 +13,7 @@ parser.add_argument("-c", "--config", help="Include a configuration file to allo
 algorithm = parser.add_argument_group('Algorithm')
 algorithm.add_argument("-t", "--tree", help="Decision Tree algorithm", action="store_true")
 algorithm.add_argument("-k", "--knn", help="K-Nearest Neighbor algorithm", action="store_true")
+algorithm.add_argument("-b", "--bayes", help="Naive Bayes algorithm", action="store_true")
 
 args = parser.parse_args()
 
@@ -25,7 +26,7 @@ else:
     print("Input data file must be specified and accessible to use this script.  Exiting...")
     sys.exit(1)
 
-if args.tree == False and args.knn == False:
+if args.tree == False and args.knn == False and args.bayes == False:
     print("An algorithm must be specified!  Exiting...")
     sys.exit(1)
 
@@ -39,6 +40,7 @@ print(df.shape)
 df = Helper.axesToNumeric(df, Helper.axisMap)
 print(df.shape)
 
+# Remove unessecary/redundant features
 df = df.drop(columns=['fileSize'])
 
 # Move the column of labels to the end so it's easier to interact with
@@ -86,6 +88,7 @@ if args.tree == True:
     #graph.write_png('D:\Dropbox\School\Graduate - LTU\Year 3\MCS 5623\Test.png')
     graph.write_png('C:/Users/carpe/Dropbox/School/Graduate - LTU/Year 3/MCS 5623/Test.png')
 
+# K-Nearest Neighbors
 elif args.knn == True:
     from sklearn.neighbors import KNeighborsClassifier
     print("K-Nearest Neighbor")
@@ -95,5 +98,16 @@ elif args.knn == True:
     print("Accuracy on training set: %.2f %% | Accuracy on test set: %.2f %%" % (
         100*knn.score(dataTrainStandardized, labelTrain), 
         100*knn.score(dataTestStandardized, labelTest)))
+
+# (Gaussian) Naive Bayes
+elif args.bayes == True:
+    from sklearn.naive_bayes import GaussianNB
+    print("(Gaussian) Naive Bayes")
+    nbayes = GaussianNB()
+    nbayes.fit(dataTrainStandardized, labelTrain)
+
+    print("Accuracy on training set: %.2f %% | Accuracy on test set: %.2f %%" % (
+        100*nbayes.score(dataTrainStandardized, labelTrain), 
+        100*nbayes.score(dataTestStandardized, labelTest)))
 
 sys.exit(0)
