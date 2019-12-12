@@ -33,12 +33,12 @@ if args.tree == False and args.knn == False and args.bayes == False:
 df = pandas.read_csv(inFile)
 
 print("%d records loaded" % (df.shape[0]))
-print(df.columns)
+#print(df.columns)
 
 ## One-hot encoding for X/Y/Z
-print(df.shape)
+#print(df.shape)
 df = Helper.axesToNumeric(df, Helper.axisMap)
-print(df.shape)
+#print(df.shape)
 
 # Remove unessecary/redundant features
 df = df.drop(columns=['fileSize'])
@@ -70,9 +70,13 @@ dataTestStandardized = scaler.transform(dataTest)
 if args.tree == True:
     from sklearn.tree import DecisionTreeClassifier, export_graphviz
     print("Decision Tree")
-    clf = DecisionTreeClassifier(criterion="entropy", max_depth=5, random_state=0)
+    print("Depth , Train (%) , Test (%)")
 
-    decisionTree = clf.fit(dataTrain, labelTrain)
+    for depth in range(1,20):
+        clf = DecisionTreeClassifier(criterion="entropy", max_depth=depth, random_state=0)
+        decisionTree = clf.fit(dataTrain, labelTrain)
+        print("%d,%.2f,%.2f" % (depth, 100*clf.score(dataTrain, labelTrain), 
+        100*clf.score(dataTest, labelTest)))
 
     print("Accuracy on training set: %.2f %% | Accuracy on test set: %.2f %%" % (
         100*clf.score(dataTrain, labelTrain), 100*clf.score(dataTest, labelTest)))
@@ -92,8 +96,13 @@ if args.tree == True:
 elif args.knn == True:
     from sklearn.neighbors import KNeighborsClassifier
     print("K-Nearest Neighbor")
-    knn = KNeighborsClassifier(n_neighbors=5, p=2, metric='minkowski')
-    knn.fit(dataTrainStandardized, labelTrain)
+    print(" K , Train (%) , Test (%)")
+    for k in range(2, int(dataTrainStandardized.shape[0]/10)):
+        knn = KNeighborsClassifier(n_neighbors=k, p=2, metric='minkowski')
+        knn.fit(dataTrainStandardized, labelTrain)
+
+        print("%d,%.2f,%.2f" % (k, 100*knn.score(dataTrainStandardized, labelTrain), 
+        100*knn.score(dataTestStandardized, labelTest)))
     
     print("Accuracy on training set: %.2f %% | Accuracy on test set: %.2f %%" % (
         100*knn.score(dataTrainStandardized, labelTrain), 
@@ -102,12 +111,13 @@ elif args.knn == True:
 # (Gaussian) Naive Bayes
 elif args.bayes == True:
     from sklearn.naive_bayes import GaussianNB
-    print("(Gaussian) Naive Bayes")
-    nbayes = GaussianNB()
-    nbayes.fit(dataTrainStandardized, labelTrain)
 
-    print("Accuracy on training set: %.2f %% | Accuracy on test set: %.2f %%" % (
-        100*nbayes.score(dataTrainStandardized, labelTrain), 
-        100*nbayes.score(dataTestStandardized, labelTest)))
+    print("(Gaussian) Naive Bayes")
+    nbayesG = GaussianNB()
+    nbayesG.fit(dataTrainStandardized, labelTrain)
+
+    print("Gaussian Accuracy on training set: %.2f %% | Accuracy on test set: %.2f %%" % (
+        100*nbayesG.score(dataTrainStandardized, labelTrain), 
+        100*nbayesG.score(dataTestStandardized, labelTest)))
 
 sys.exit(0)
