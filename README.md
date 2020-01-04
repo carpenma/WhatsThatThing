@@ -5,19 +5,19 @@ Identifying STLs with Machine Learning
 - [x] Download more datasets
   - [x] Cookie Cutters
   - [x] Rings
-- [ ] Remove redundant features
+- [x] Remove redundant features
 - [x] Standardize data
-- [ ] Research papers on 3D object identification
-- [ ] Compile results from algorithms
-  - [ ] Decision Trees
-  - [ ] Nearest Neighbor
+- [x] Research papers on 3D object identification
+- [x] Compile results from algorithms
+  - [x] Decision Trees
+  - [x] Nearest Neighbor
+  - [x] Naive Bayes
 - [ ] Voxel-Based Model?
 - [ ] Create project slides
 - [ ] Write up report on my results
 
 ## Tasks for each script
 ### ThingFileManipulator - Performing file operations requred to prep data for processing
-
 - [x] Unzipping
 - [x] Removing non-STLs
 - [ ] Determining which STLs in a folder to keep if multiple present
@@ -32,7 +32,7 @@ Identifying STLs with Machine Learning
 - [x] Aspect ratios
 - [ ] Get data from thingiverse like item names and descriptions?
 - [x] Overall file size? (Redundant w/ # triangles)
-- [ ] Add labels to all rows representing the grouo the data belongs to!
+- [x] Add labels to all rows representing the grouo the data belongs to!
 - [x] Export data to CSV
 #### Metrics Functions
 - [x] Count of folders with multiple STLs
@@ -58,5 +58,4 @@ Identifying STLs with Machine Learning
 4. Remove non-STLs from folders and relocate multi-STL folders for review (ThingFileManipulator w/ --prune)
 5. Rename STLs to match thing number and relocate (ThingFileManipulator w/ --rename)
 6. Generate CSV of metadata for objects (MetadataGenerator)
-### ========= Implemented up to this line ========
-7. Combine desired datasets and run alrogithms ()
+7. Combine desired datasets and run alrogithms (DoDataScience)
